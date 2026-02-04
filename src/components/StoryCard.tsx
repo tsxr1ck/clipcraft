@@ -11,26 +11,33 @@ interface StoryCardProps {
     segment: DbSegment;
     isGeneratingImage: boolean;
     isGeneratingAudio: boolean;
+    isGeneratingVideo?: boolean;
     onRegenerateImage: () => void;
     onRegenerateAudio: () => void;
+    onGenerateVideo?: () => void;
 }
 
 export function StoryCard({
     segment,
     isGeneratingImage,
     isGeneratingAudio,
+    isGeneratingVideo,
     onRegenerateImage,
     onRegenerateAudio,
+    onGenerateVideo,
 }: StoryCardProps) {
     const [imageError, setImageError] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [playingVideo, setPlayingVideo] = useState(false);
 
     const handleImageError = () => {
         setImageError(true);
     };
 
     const handleImageClick = () => {
-        if (segment.image_url && !imageError) {
+        if (segment.video_url) {
+            setPlayingVideo(!playingVideo);
+        } else if (segment.image_url && !imageError) {
             setShowModal(true);
         }
     };
@@ -38,46 +45,67 @@ export function StoryCard({
     return (
         <>
             <Card className="relative overflow-hidden group border-border/60 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-500 bg-card rounded-2xl hover:-translate-y-1">
-                {/* Image Section */}
+                {/* Visual Section (Image or Video) */}
                 <div
-                    className={`relative aspect-video w-full bg-muted overflow-hidden ${segment.image_url && !imageError ? 'cursor-pointer' : ''}`}
+                    className={`relative aspect-video w-full bg-muted overflow-hidden ${segment.image_url || segment.video_url ? 'cursor-pointer' : ''}`}
                     onClick={handleImageClick}
                 >
-                    {isGeneratingImage ? (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
-                            <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mb-3" />
-                            <span className="text-xs font-semibold text-primary bg-background/90 px-3 py-1.5 rounded-full shadow-sm border border-border">Generating image...</span>
-                        </div>
-                    ) : segment.image_url && !imageError ? (
-                        <>
-                            <img
-                                src={segment.image_url}
-                                alt={`Segment ${segment.segment_index + 1}`}
-                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                                onError={handleImageError}
-                            />
-                            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-black/10 opacity-60 group-hover:opacity-70 transition-opacity" />
-
-                            {/* Expand icon on hover */}
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                                <div className="p-3 rounded-full bg-black/30 backdrop-blur-md text-white border border-white/20 transform scale-90 group-hover:scale-100 transition-transform">
-                                    <Maximize2 size={24} />
-                                </div>
-                            </div>
-                        </>
+                    {/* Video Player */}
+                    {segment.video_url && playingVideo ? (
+                        <video
+                            src={segment.video_url}
+                            controls
+                            autoPlay
+                            className="w-full h-full object-cover"
+                            onClick={(e) => e.stopPropagation()} // Allow controls to work
+                        />
                     ) : (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted text-muted-foreground/40">
-                            <ImageIcon size={32} />
-                        </div>
+                        <>
+                            {/* Image Display */}
+                            {isGeneratingImage ? (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-sm z-10">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mb-3" />
+                                    <span className="text-xs font-semibold text-primary bg-background/90 px-3 py-1.5 rounded-full shadow-sm border border-border">Generating image...</span>
+                                </div>
+                            ) : segment.image_url && !imageError ? (
+                                <img
+                                    src={segment.image_url}
+                                    alt={`Segment ${segment.segment_index + 1}`}
+                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                    onError={handleImageError}
+                                />
+                            ) : (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted text-muted-foreground/40">
+                                    <ImageIcon size={32} />
+                                </div>
+                            )}
+
+                            {/* Overlays */}
+                            {segment.video_url && !playingVideo && (
+                                <div className="absolute inset-0 flex items-center justify-center z-20">
+                                    <div className="p-3 rounded-full bg-black/50 backdrop-blur-md text-white border border-white/20 hover:scale-110 transition-transform">
+                                        <Volume2 size={32} className="fill-white" />
+                                    </div>
+                                </div>
+                            )}
+
+                            {isGeneratingVideo && (
+                                <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-sm z-30">
+                                    <div className="animate-spin rounded-full h-8 w-8 border-2 border-purple-500 border-t-transparent mb-3" />
+                                    <span className="text-xs font-semibold text-white bg-black/40 px-3 py-1.5 rounded-full border border-purple-500/30">Generating Video...</span>
+                                </div>
+                            )}
+                        </>
                     )}
 
-                    {/* Duration Badge - Glassmorphism */}
-                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold tracking-wide shadow-sm">
+
+                    {/* Duration Badge */}
+                    <div className="absolute top-3 right-3 px-2.5 py-1 rounded-lg bg-black/40 backdrop-blur-md border border-white/10 text-white text-[10px] font-bold tracking-wide shadow-sm z-20 pointer-events-none">
                         {segment.duration_seconds}s
                     </div>
 
-                    {/* Segment Number - Gradient */}
-                    <div className="absolute top-3 left-3 w-8 h-8 rounded-xl bg-linear-to-br from-primary to-purple-600 shadow-lg text-white flex items-center justify-center font-bold text-sm ring-1 ring-white/20">
+                    {/* Segment Number */}
+                    <div className="absolute top-3 left-3 w-8 h-8 rounded-xl bg-linear-to-br from-primary to-purple-600 shadow-lg text-white flex items-center justify-center font-bold text-sm ring-1 ring-white/20 z-20 pointer-events-none">
                         {segment.segment_index + 1}
                     </div>
                 </div>
@@ -92,8 +120,8 @@ export function StoryCard({
                     </CardDescription>
                 </CardHeader>
 
-                {/* Audio Player Section */}
                 <CardContent className="pb-3 px-5">
+                    {/* Narration Controls (Same as before) */}
                     <div className="flex items-center justify-between mb-3">
                         <h4 className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70 flex items-center gap-1.5">
                             <Volume2 size={12} className="text-primary" />
@@ -132,7 +160,7 @@ export function StoryCard({
                     </p>
                 </CardContent>
 
-                <CardFooter className="pt-0 px-5 pb-5">
+                <CardFooter className="pt-0 px-5 pb-5 grid grid-cols-2 gap-2">
                     <Button
                         variant="outline"
                         size="sm"
@@ -141,7 +169,22 @@ export function StoryCard({
                         disabled={isGeneratingImage}
                     >
                         <RefreshCw size={12} className={isGeneratingImage ? 'animate-spin' : ''} />
-                        {isGeneratingImage ? 'Redrawing...' : 'Regenerate Image'}
+                        {isGeneratingImage ? 'Redrawing...' : 'Image'}
+                    </Button>
+
+                    <Button
+                        variant={segment.video_url ? "default" : "secondary"}
+                        size="sm"
+                        className={`w-full h-9 gap-2 text-xs font-semibold ${segment.video_url ? 'bg-purple-600 hover:bg-purple-700' : ''}`}
+                        onClick={onGenerateVideo}
+                        disabled={isGeneratingVideo}
+                    >
+                        {isGeneratingVideo ? (
+                            <RefreshCw size={12} className="animate-spin" />
+                        ) : (
+                            <Maximize2 size={12} /> // Use a video icon here ideally
+                        )}
+                        {segment.video_url ? 'Regenerate Video' : 'Generate Video'}
                     </Button>
                 </CardFooter>
             </Card>

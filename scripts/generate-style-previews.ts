@@ -8,84 +8,93 @@ const __dirname = path.dirname(__filename);
 // ─── style definitions: each one has a locked API style + a prompt tailored
 //     to visually *scream* that style ──────────────────────────────────────────
 const STYLES: Record<string, { apiStyle: string; prompt: string }> = {
-    "comic-book": {
+    // "comic-book": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Bold comic book panel, a mysterious hooded figure standing in a dark alley at night, " +
+    //         "thick black ink outlines, halftone dot shading, vibrant saturated colors, speech bubble, " +
+    //         "dramatic lighting, Marvel manga crossover style, high contrast",
+    // },
+    // "creepy-comic": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Creepy indie comic illustration, a gaunt pale figure standing in a doorway with unnatural shadows, " +
+    //         "wobbly hand-drawn ink lines, muted sickly greens and browns, unsettling expressions, " +
+    //         "horror comic book style, eerie atmosphere, disturbing details",
+    // },
+    // "cinematic-realistic": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Cinematic photorealistic scene, a lone soldier standing on a war-torn bridge at golden hour, " +
+    //         "volumetric fog, dramatic directional lighting, shallow depth of field, " +
+    //         "movie still quality, 4K, RAW photo, anamorphic lens flare",
+    // },
+    // "anime": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Anime illustration, a beautiful warrior girl with long flowing silver hair standing on a mountaintop, " +
+    //         "large expressive eyes, vibrant cel-shaded colors, dynamic pose, cherry blossom petals, " +
+    //         "studio Ghibli meets Demon Slayer art style, detailed backgrounds",
+    // },
+    // "oil-painting": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Classical oil painting on canvas, a grand European nobleman in 18th century dress seated in a velvet chair, " +
+    //         "visible thick brushstrokes, rich deep colors, dramatic chiaroscuro lighting, " +
+    //         "Rembrandt style, museum quality, crackled paint texture, gold frame worthy",
+    // },
+    // "3d-render": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Stylized 3D render, a futuristic robot standing in a sleek minimalist white room, " +
+    //         "ray-traced reflections, subsurface scattering on translucent parts, " +
+    //         "perfect studio lighting, Blender Cycles quality, glossy materials, sharp edges",
+    // },
+    // "watercolor": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Watercolor painting on textured paper, a serene countryside cottage surrounded by wildflowers and mist, " +
+    //         "soft bleeding color edges, visible paper texture, translucent washes of pastel colors, " +
+    //         "loose impressionist brushwork, dreamy and ethereal atmosphere",
+    // },
+    // "cyberpunk": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Cyberpunk city street at night, a street samurai with neon tattoos and chrome implants, " +
+    //         "neon signs in Japanese and English, rain-slicked ground reflecting purple and blue lights, " +
+    //         "holographic advertisements, dense urban environment, high contrast, moody atmosphere",
+    // },
+    // "steampunk": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Steampunk mechanical scene, an inventor in goggles and leather coat tinkering with a massive brass clockwork machine, " +
+    //         "exposed gears and copper pipes, steam billowing, warm amber and bronze tones, " +
+    //         "Victorian era industrial aesthetic, intricate mechanical details, dark workshop",
+    // },
+    // "gothic": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Dark gothic illustration, a cloaked figure standing before a crumbling cathedral in a stormy night, " +
+    //         "gargoyles perched on the rooftop, lightning in the background, " +
+    //         "deep black and grey palette, medieval horror, ink wash style",
+    // },
+    // "scary-cartoon": {
+    //     apiStyle: "<auto>",
+    //     prompt:
+    //         "Illustrated comic book style animation, historical scene set in 1957, " +
+    //         "professional office interior with vintage furniture and period-accurate details, " +
+    //         "multiple characters in business attire with semi-realistic proportions, " +
+    //         "dramatic cinematic lighting with deep shadows and highlights",
+    // },
+    "pixar-like": {
         apiStyle: "<auto>",
         prompt:
-            "Bold comic book panel, a mysterious hooded figure standing in a dark alley at night, " +
-            "thick black ink outlines, halftone dot shading, vibrant saturated colors, speech bubble, " +
-            "dramatic lighting, Marvel manga crossover style, high contrast",
+            "Pixar-style 3D animation, cute anthropomorphized object with oversized glossy brown eyes and innocent smile, " +
+            "rounded soft features, cool desaturated color grading, cinematic lighting, low angle camera, " +
+            "shallow depth of field, wholesome melancholic mood, gentle character expressions, Disney quality rendering",
     },
-    "creepy-comic": {
-        apiStyle: "<auto>",
-        prompt:
-            "Creepy indie comic illustration, a gaunt pale figure standing in a doorway with unnatural shadows, " +
-            "wobbly hand-drawn ink lines, muted sickly greens and browns, unsettling expressions, " +
-            "horror comic book style, eerie atmosphere, disturbing details",
-    },
-    "cinematic-realistic": {
-        apiStyle: "<auto>",
-        prompt:
-            "Cinematic photorealistic scene, a lone soldier standing on a war-torn bridge at golden hour, " +
-            "volumetric fog, dramatic directional lighting, shallow depth of field, " +
-            "movie still quality, 4K, RAW photo, anamorphic lens flare",
-    },
-    "anime": {
-        apiStyle: "<auto>",
-        prompt:
-            "Anime illustration, a beautiful warrior girl with long flowing silver hair standing on a mountaintop, " +
-            "large expressive eyes, vibrant cel-shaded colors, dynamic pose, cherry blossom petals, " +
-            "studio Ghibli meets Demon Slayer art style, detailed backgrounds",
-    },
-    "oil-painting": {
-        apiStyle: "<auto>",
-        prompt:
-            "Classical oil painting on canvas, a grand European nobleman in 18th century dress seated in a velvet chair, " +
-            "visible thick brushstrokes, rich deep colors, dramatic chiaroscuro lighting, " +
-            "Rembrandt style, museum quality, crackled paint texture, gold frame worthy",
-    },
-    "3d-render": {
-        apiStyle: "<auto>",
-        prompt:
-            "Stylized 3D render, a futuristic robot standing in a sleek minimalist white room, " +
-            "ray-traced reflections, subsurface scattering on translucent parts, " +
-            "perfect studio lighting, Blender Cycles quality, glossy materials, sharp edges",
-    },
-    "watercolor": {
-        apiStyle: "<auto>",
-        prompt:
-            "Watercolor painting on textured paper, a serene countryside cottage surrounded by wildflowers and mist, " +
-            "soft bleeding color edges, visible paper texture, translucent washes of pastel colors, " +
-            "loose impressionist brushwork, dreamy and ethereal atmosphere",
-    },
-    "cyberpunk": {
-        apiStyle: "<auto>",
-        prompt:
-            "Cyberpunk city street at night, a street samurai with neon tattoos and chrome implants, " +
-            "neon signs in Japanese and English, rain-slicked ground reflecting purple and blue lights, " +
-            "holographic advertisements, dense urban environment, high contrast, moody atmosphere",
-    },
-    "steampunk": {
-        apiStyle: "<auto>",
-        prompt:
-            "Steampunk mechanical scene, an inventor in goggles and leather coat tinkering with a massive brass clockwork machine, " +
-            "exposed gears and copper pipes, steam billowing, warm amber and bronze tones, " +
-            "Victorian era industrial aesthetic, intricate mechanical details, dark workshop",
-    },
-    "gothic": {
-        apiStyle: "<auto>",
-        prompt:
-            "Dark gothic illustration, a cloaked figure standing before a crumbling cathedral in a stormy night, " +
-            "gargoyles perched on the rooftop, lightning in the background, " +
-            "deep black and grey palette, medieval horror, ink wash style",
-    },
-    "scary-cartoon": {
-        apiStyle: "<auto>",
-        prompt:
-            "Illustrated comic book style animation, historical scene set in 1957, " +
-            "professional office interior with vintage furniture and period-accurate details, " +
-            "multiple characters in business attire with semi-realistic proportions, " +
-            "dramatic cinematic lighting with deep shadows and highlights",
-    }
+
+
 };
 
 // ─── script definitions: visual metaphors for each tone ──────────────────
@@ -255,7 +264,7 @@ async function processStyles(styles: Record<string, any>, outputDir: string, typ
 async function main() {
     await processStyles(STYLES, VISUAL_OUTPUT_DIR, 'visual');
     console.log('\n----------------------------------------\n');
-    await processStyles(SCRIPT_STYLES, SCRIPT_OUTPUT_DIR, 'script');
+    // await processStyles(SCRIPT_STYLES, SCRIPT_OUTPUT_DIR, 'script');
 
     console.log('\n✨ All Done!');
 }

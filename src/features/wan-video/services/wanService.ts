@@ -4,7 +4,8 @@ import { SupabaseService } from '../../../services/supabaseService';
 // Use the proxy path defined in vite.config.ts
 const DASHSCOPE_API_URL = '/api/wan/services/aigc/video-generation/video-synthesis';
 // Using the model requested by user
-const MODEL_NAME = 'wan2.6-t2v';
+// const MODEL_NAME = 'wan2.6-t2v';
+const MODEL_NAME = 'wan2.5-t2v-preview';
 
 export interface WanVideoOptions {
     resolution?: '1280*720' | '1920*1080' | '720*1280' | '1080*1920';

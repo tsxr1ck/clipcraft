@@ -16,7 +16,7 @@ import { GenerationHistory } from './GenerationHistory';
 interface GenerationPanelProps {
     onGenerate: (
         baseIdea: string,
-        duration: number,
+        segmentCount: number,
         visualStyle: VisualStyleKey | VisualStyleLabel,
         scriptStyle: ScriptStyleKey | ScriptStyleLabel
     ) => void | Promise<void>;
@@ -35,7 +35,7 @@ const GENERATION_STEPS = [
 export function GenerationPanel({ onGenerate, isGenerating }: GenerationPanelProps) {
     const [activeTab, setActiveTab] = useState<'create' | 'history'>('create');
     const [baseIdea, setBaseIdea] = useState('');
-    const [selectedDuration, setSelectedDuration] = useState(30);
+    const [selectedSegmentCount, setSelectedSegmentCount] = useState(3);
     const [visualStyle, setVisualStyle] = useState<VisualStyleKey | VisualStyleLabel>(VisualStyleKey.CinematicRealistic);
     const [scriptStyle, setScriptStyle] = useState<ScriptStyleKey | ScriptStyleLabel>(ScriptStyleKey.DramaticTelenovela);
 
@@ -60,7 +60,7 @@ export function GenerationPanel({ onGenerate, isGenerating }: GenerationPanelPro
 
     const handleSubmit = () => {
         if (baseIdea.trim()) {
-            onGenerate(baseIdea, selectedDuration, visualStyle, scriptStyle);
+            onGenerate(baseIdea, selectedSegmentCount, visualStyle, scriptStyle);
         }
     };
 
@@ -169,26 +169,26 @@ export function GenerationPanel({ onGenerate, isGenerating }: GenerationPanelPro
                         />
 
                         <div className="flex flex-col gap-6 w-full">
-                            {/* Duration */}
+                            {/* Segment Count (replaced Video Duration) */}
                             <div className="flex flex-col gap-2.5">
                                 <p className="text-xs font-bold text-muted-foreground flex items-center gap-1.5 uppercase tracking-wider pl-1">
                                     <Clock size={12} strokeWidth={2.5} />
-                                    Video Duration
+                                    Number of Segments
                                 </p>
                                 <div className="flex items-center gap-2">
-                                    {[30, 50, 80].map((duration) => (
+                                    {[3, 5, 8].map((count) => (
                                         <button
-                                            key={duration}
-                                            onClick={() => setSelectedDuration(duration)}
+                                            key={count}
+                                            onClick={() => setSelectedSegmentCount(count)}
                                             disabled={isGenerating}
                                             className={`
                                                 px-4 py-2 rounded-xl text-xs font-semibold transition-all border shadow-sm
-                                                ${selectedDuration === duration
+                                                ${selectedSegmentCount === count
                                                     ? 'bg-primary/10 text-primary border-primary/20 ring-2 ring-primary/10 shadow-primary/10'
                                                     : 'bg-background text-muted-foreground border-border hover:border-primary/30 hover:bg-muted/50'}
                                             `}
                                         >
-                                            {duration}s <span className="opacity-60 text-[10px] ml-1 font-normal">({Math.round(duration / 10)} segs)</span>
+                                            {count} Segments <span className="opacity-60 text-[10px] ml-1 font-normal">(~{count * 10}s)</span>
                                         </button>
                                     ))}
                                 </div>
@@ -205,6 +205,7 @@ export function GenerationPanel({ onGenerate, isGenerating }: GenerationPanelPro
                                     }))}
                                     selectedId={visualStyle}
                                     onSelect={(id) => setVisualStyle(id as VisualStyleKey)}
+                                    imageBasePath="/assets/styles"
                                     imageBasePath="/assets/styles"
                                 />
 

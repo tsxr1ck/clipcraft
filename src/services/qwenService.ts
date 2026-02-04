@@ -121,12 +121,15 @@ export class QwenService {
      */
     static async generateStory(
         baseIdea: string,
-        duration: number = 30,
+        segmentCount: number = 3,
         visualStyle: VisualStyleKey | VisualStyleLabel = VisualStyleKey.CinematicRealistic,
         scriptStyle: ScriptStyleKey | ScriptStyleLabel = ScriptStyleKey.DramaticTelenovela
     ): Promise<Story> {
         const startTime = new Date();
         let generationId: string | null = null;
+
+        // Assume ~10s per segment as requested
+        const estimatedDuration = segmentCount * 10;
 
         // Resolve metadata
         const vKey = isVisualStyleKey(visualStyle) ? visualStyle : visualStyleLabelToKey(visualStyle as VisualStyleLabel);
@@ -143,7 +146,7 @@ export class QwenService {
                 provider: 'qwen',
                 metadata: {
                     base_idea: baseIdea,
-                    duration_target: duration,
+                    segment_count_target: segmentCount,
                     visual_style: visualStyle,
                     script_style: scriptStyle
                 }
@@ -161,8 +164,8 @@ export class QwenService {
                 console.warn('Failed to create generation record:', genError);
             }
 
-            // Calculate target segments (approx 10s per segment)
-            const targetSegments = Math.max(3, Math.round(duration / 10));
+            // Target segments is now explicit
+            const targetSegments = segmentCount;
 
             const response = await fetch(QWEN_API_URL, {
                 method: 'POST',
@@ -173,7 +176,7 @@ export class QwenService {
                         {
                             role: 'system',
                             content: SYSTEM_PROMPT_TEMPLATE(
-                                duration,
+                                estimatedDuration,
                                 targetSegments,
                                 vMetadata.label,
                                 vMetadata.description,
@@ -238,7 +241,8 @@ export class QwenService {
                     generationId: generationId || undefined,
                     metadata: {
                         base_idea: baseIdea,
-                        duration_target: duration,
+                        estimated_duration: estimatedDuration,
+                        segment_count: segmentCount,
                         visual_style: visualStyle,
                         script_style: scriptStyle
                     }

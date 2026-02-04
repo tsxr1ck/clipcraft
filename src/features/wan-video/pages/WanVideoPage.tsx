@@ -9,6 +9,7 @@ import { Plus, Film, Loader2, ChevronRight, Wand2, Sparkles } from 'lucide-react
 import { cn } from '../../../lib/utils';
 import { StylePicker } from '../../../components/StylePicker';
 import { VISUAL_STYLE_KEYS, VISUAL_STYLE_METADATA } from '../../../types/styles';
+import { Slider } from '../../../components/ui/slider';
 
 export const WanVideoPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -21,6 +22,7 @@ export const WanVideoPage = () => {
     // Creation Form
     const [premise, setPremise] = useState('');
     const [selectedStyleKey, setSelectedStyleKey] = useState<string>('cinematic-realistic');
+    const [segmentCount, setSegmentCount] = useState<number>(3);
     const [isGeneratingStory, setIsGeneratingStory] = useState(false);
 
     useEffect(() => {
@@ -42,7 +44,7 @@ export const WanVideoPage = () => {
         try {
             // Get the readable label for the LLM
             const styleLabel = VISUAL_STYLE_METADATA[selectedStyleKey as keyof typeof VISUAL_STYLE_METADATA]?.label || 'Cinematic';
-            const storyId = await WanStoryService.generateStoryFromPremise(premise, styleLabel);
+            const storyId = await WanStoryService.generateStoryFromPremise(premise, styleLabel, segmentCount);
             await fetchStories();
             setSelectedStoryId(storyId);
             setIsCreating(false);
@@ -168,6 +170,31 @@ export const WanVideoPage = () => {
                                             onSelect={setSelectedStyleKey}
                                             imageBasePath="/assets/styles"
                                             aspectRatio="square"
+                                        />
+                                    </div>
+
+                                    {/* Segment Count */}
+                                    <div className="bg-white p-6 rounded-2xl border shadow-sm space-y-4">
+                                        <div className="flex items-center justify-between">
+                                            <div className="space-y-0.5">
+                                                <label className="block text-sm font-medium text-slate-700">
+                                                    Duration / Segments
+                                                </label>
+                                                <p className="text-xs text-slate-500">
+                                                    Each segment is ~5 seconds. Total video: ~{segmentCount * 5}s
+                                                </p>
+                                            </div>
+                                            <span className="text-sm font-bold text-purple-600 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">
+                                                {segmentCount} Segments
+                                            </span>
+                                        </div>
+                                        <Slider
+                                            value={[segmentCount]}
+                                            onValueChange={(val) => setSegmentCount(val[0])}
+                                            min={1}
+                                            max={10}
+                                            step={1}
+                                            className="w-full py-4"
                                         />
                                     </div>
 

@@ -34,18 +34,17 @@ export class ClipCraftService {
                 id: s.id,
                 story_id: s.story_id,
                 segment_index: s.segment_index,
-                text: s.text,
-                image_url: s.image_url,
-                audio_url: s.audio_url,
                 duration_seconds: s.duration_seconds,
+                text: s.text,
                 visual_prompt: s.visual_prompt,
+                video_url: s.video_url, // Include generated video URL
             })),
             story_beats: options.storyBeats ?? null,
             add_opening_card: options.addOpeningCard ?? true,
             opening_text: options.openingText ?? "😱 WAIT FOR IT...",
             show_progress: options.showProgress ?? true,
             enable_karaoke_subs: options.enableKaraoke ?? true,
-            subtitle_style: options.subtitleStyle ?? "bold",
+            subtitle_style: options.subtitleStyle ?? "bold", // Updated default to "modern"
             language: options.language ?? "es",
         };
 
@@ -86,7 +85,7 @@ export class ClipCraftService {
         // The URL returned by the API might be relative or absolute.
         // If relative, prepend API_BASE_URL.
         const fullUrl = url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
-
+        console.log(`Fetching video blob from: ${fullUrl}`);
         const response = await fetch(fullUrl);
         if (!response.ok) {
             throw new Error(`Failed to download video: ${response.statusText}`);

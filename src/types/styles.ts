@@ -15,6 +15,7 @@ export const VisualStyleKey = {
     Steampunk: 'steampunk',
     Gothic: 'gothic',
     ScaryCartoon: 'scary-cartoon',
+    PixarLike: 'pixar-like',
 } as const;
 
 export const VisualStyleLabel = {
@@ -29,6 +30,7 @@ export const VisualStyleLabel = {
     Steampunk: 'Steampunk',
     Gothic: 'Gothic',
     ScaryCartoon: 'Scary Cartoon',
+    PixarLike: 'Pixar Like',
 } as const;
 
 export const VisualStyleDescription = {
@@ -43,6 +45,7 @@ export const VisualStyleDescription = {
     Steampunk: 'Steampunk mechanical scene with exposed gears, copper pipes, and Victorian era industrial aesthetic',
     Gothic: 'Dark gothic illustration with deep black and grey palette and medieval horror style',
     ScaryCartoon: 'Illustrated comic book style with dramatic cinematic lighting and semi-realistic proportions',
+    PixarLike: 'Pixar-style 3D animation with cute characters, rounded features, and Disney quality rendering',
 } as const;
 
 // Type-safe key and label types
@@ -208,6 +211,14 @@ export const VISUAL_STYLE_METADATA: Record<VisualStyleKey, VisualStyleMetadata> 
         imagePath: '/assets/styles/scary-cartoon.jpg',
         tags: ['illustrated', 'dramatic', 'historical', 'cinematic'],
         bestFor: ['historical stories', 'period narratives', 'dramatic tales', 'vintage stories'],
+    },
+    'pixar-like': {
+        key: 'pixar-like',
+        label: 'Pixar Like',
+        description: 'Pixar-style 3D animation with cute characters, rounded features, and Disney quality rendering',
+        imagePath: '/assets/styles/pixar-like.jpg',
+        tags: ['3d', 'cute', 'animated', 'wholesome', 'disney'],
+        bestFor: ['children stories', 'emotional narratives', 'cute tales', 'animated adventures'],
     },
 };
 

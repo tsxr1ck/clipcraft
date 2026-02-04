@@ -17,14 +17,14 @@ export class WanStoryService {
     /**
      * Generate a full story structure + segments from a simple premise
      */
-    static async generateStoryFromPremise(premise: string, visualStyle: string = 'Cinematic'): Promise<string> {
+    static async generateStoryFromPremise(premise: string, visualStyle: string = 'Cinematic', segmentCount: number = 3): Promise<string> {
 
         const systemPrompt = `You are an expert short-form video director.
         Create a compelling video script based on the user's premise.
         
         CRITICAL RULES:
         1. LANGUAGE: All "text" content MUST be in Mexican Spanish.
-        2. STRUCTURE: Generate EXACTLY 3 segments (Intro, Middle, Climax/End).
+        2. STRUCTURE: Generate EXACTLY ${segmentCount} segments (Intro, Middle, Climax/End).
         3. DURATION: Each segment represents about 5 seconds of video.
         4. STYLE: Visual style must be "${visualStyle}".
 

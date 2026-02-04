@@ -120,21 +120,32 @@ export function useVideoGenerator(): UseVideoGeneratorReturn {
                 } else if (jobStatus.status === 'completed' && jobStatus.output_url) {
                     cleanup();
 
-                    // Download and Upload
-                    console.log('Downloading video...');
-                    const videoBlob = await ClipCraftService.downloadVideo(jobStatus.output_url);
+                    try {
+                        // Download and Upload
+                        console.log('Downloading video...', jobStatus.output_url);
+                        const videoBlob = await ClipCraftService.downloadVideo(jobStatus.output_url);
 
-                    console.log('Uploading to Supabase...');
-                    const publicUrl = await SupabaseService.uploadVideo(videoBlob, storyId);
+                        console.log('Video downloaded, uploading to Supabase...');
+                        const publicUrl = await SupabaseService.uploadVideo(videoBlob, storyId);
+                        console.log('Video uploaded to Supabase:', publicUrl);
 
-                    // Update DB
-                    await SupabaseService.updateStoryVideo(storyId, publicUrl, 'completed', jobId);
+                        // Update DB
+                        await SupabaseService.updateStoryVideo(storyId, publicUrl, 'completed', jobId);
 
-                    setVideoUrl(publicUrl);
-                    setProgress(100);
-                    setProgressMessage('Done!');
-                    setStatus('completed');
-                    setIsGenerating(false);
+                        setVideoUrl(publicUrl);
+                        setProgress(100);
+                        setProgressMessage('Done!');
+                        setStatus('completed');
+                        setIsGenerating(false);
+                    } catch (uploadError) {
+                        console.error('Failed to download/upload video:', uploadError);
+                        setError(`Failed to save video: ${uploadError instanceof Error ? uploadError.message : 'Unknown error'}`);
+                        setStatus('failed');
+                        setIsGenerating(false);
+                        // Likely keep the job marked as completed remotely, but failed locally or update DB to failed?
+                        // Let's update DB to failed for now so user can retry
+                        await SupabaseService.updateStoryVideo(storyId, null, 'failed', jobId);
+                    }
                 }
             } catch (err) {
                 console.error('Polling error:', err);

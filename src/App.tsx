@@ -32,11 +32,7 @@ function App() {
           />
           <Route
             path="/wan-video"
-            element={
-              <ProtectedRoute>
-                <WanVideoPage />
-              </ProtectedRoute>
-            }
+            element={<WanVideoPage />}
           />
         </Routes>
       </AuthProvider>

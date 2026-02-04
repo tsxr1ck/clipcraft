@@ -17,7 +17,7 @@ interface UseStoryGeneratorReturn {
     currentStory: StoryWithSegments | null;
     generateStory: (
         baseIdea: string,
-        duration?: number,
+        segmentCount?: number,
         visualStyle?: VisualStyleKey | VisualStyleLabel,
         scriptStyle?: ScriptStyleKey | ScriptStyleLabel
     ) => Promise<StoryWithSegments | null>;
@@ -33,7 +33,7 @@ export function useStoryGenerator(): UseStoryGeneratorReturn {
 
     const generateStory = useCallback(async (
         baseIdea: string,
-        duration: number = 30,
+        segmentCount: number = 3,
         visualStyle: VisualStyleKey | VisualStyleLabel = VisualStyleKey.CinematicRealistic,
         scriptStyle: ScriptStyleKey | ScriptStyleLabel = ScriptStyleKey.DramaticTelenovela
     ): Promise<StoryWithSegments | null> => {
@@ -47,7 +47,7 @@ export function useStoryGenerator(): UseStoryGeneratorReturn {
 
         try {
             // Generate story using Qwen
-            const story: Story = await QwenService.generateStory(baseIdea, duration, visualStyle, scriptStyle);
+            const story: Story = await QwenService.generateStory(baseIdea, segmentCount, visualStyle, scriptStyle);
             console.log('Story generated:', story);
 
             // Save to Supabase (returns story with segments)

@@ -12,6 +12,7 @@ import { useStoryGenerator } from '../hooks/useStoryGenerator';
 import { useImageGenerator } from '../hooks/useImageGenerator';
 import { useAudioGenerator } from '../hooks/useAudioGenerator';
 import { useVideoGenerator } from '../hooks/useVideoGenerator';
+import { useWanVideoGenerator } from '../hooks/useWanVideoGenerator';
 import { useStoredStories } from '../hooks/useStoredStories';
 import { Images, Volume2, AlertCircle, Sparkles, Video, Download, Loader2, Film, Wand2, Zap } from 'lucide-react';
 import type { StoryWithSegments, DbSegment } from '../types/database';
@@ -67,6 +68,12 @@ export function Dashboard() {
     } = useVideoGenerator();
 
     const {
+        generatingSegmentIds: generatingWanSegmentIds,
+        generateSegmentVideo: generateWanSegmentVideo,
+        generateAllVideos
+    } = useWanVideoGenerator();
+
+    const {
         stories,
         isLoading: isLoadingStories,
         error: storiesError,
@@ -89,25 +96,23 @@ export function Dashboard() {
     // Handle story generation
     const handleGenerate = useCallback(async (
         baseIdea: string,
-        duration: number,
+        segmentCount: number,
         visualStyle: VisualStyleKey | VisualStyleLabel,
         scriptStyle: ScriptStyleKey | ScriptStyleLabel
     ) => {
         clearStoryError();
-        const story = await generateStory(baseIdea, duration, visualStyle, scriptStyle);
+        const story = await generateStory(baseIdea, segmentCount, visualStyle, scriptStyle);
 
         if (story) {
             setShowGenerator(false);
             refreshStories();
 
-            // Generate images and audios in parallel
-            await Promise.all([
-                generateAllImages(story, handleSegmentUpdate),
-                generateAllAudios(story, handleSegmentUpdate),
-            ]);
+            // Auto-generate videos for all segments (skipping image/audio for now as requested)
+            await generateAllVideos(story.segments, handleSegmentUpdate);
+
             refreshStories();
         }
-    }, [generateStory, generateAllImages, generateAllAudios, refreshStories, clearStoryError, handleSegmentUpdate]);
+    }, [generateStory, generateAllVideos, refreshStories, clearStoryError, handleSegmentUpdate]);
 
     // Handle story selection
     const handleSelectStory = useCallback((story: StoryWithSegments) => {
@@ -625,6 +630,11 @@ export function Dashboard() {
                                                 }
                                                 onRegenerateImage={() => handleRegenerateImage(item as DbSegment)}
                                                 onRegenerateAudio={() => handleRegenerateAudio(item as DbSegment)}
+                                                isGeneratingVideo={
+                                                    generatingWanSegmentIds.has((item as DbSegment).id) ||
+                                                    (item as DbSegment).video_status === 'generating'
+                                                }
+                                                onGenerateVideo={() => generateWanSegmentVideo(item as DbSegment, handleSegmentUpdate)}
                                             />
                                         )
                                     ))}

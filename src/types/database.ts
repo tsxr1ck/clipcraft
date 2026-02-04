@@ -65,6 +65,9 @@ export interface Database {
                     visual_prompt: string;
                     image_url: string | null;
                     audio_url: string | null;
+                    video_url: string | null;      // Added
+                    video_status: string;          // Added (default 'idle')
+                    video_asset_id: string | null; // Added
                     created_at: string;
                     updated_at: string;
                     episode_id: string | null;
@@ -80,6 +83,9 @@ export interface Database {
                     visual_prompt: string;
                     image_url?: string | null;
                     audio_url?: string | null;
+                    video_url?: string | null;      // Added
+                    video_status?: string;          // Added
+                    video_asset_id?: string | null; // Added
                     created_at?: string;
                     updated_at?: string;
                     episode_id?: string | null;
@@ -95,6 +101,9 @@ export interface Database {
                     visual_prompt?: string;
                     image_url?: string | null;
                     audio_url?: string | null;
+                    video_url?: string | null;      // Added
+                    video_status?: string;          // Added
+                    video_asset_id?: string | null; // Added
                     created_at?: string;
                     updated_at?: string;
                     episode_id?: string | null;
